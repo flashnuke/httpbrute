@@ -76,7 +76,7 @@ class HTTPBrute:
                 self._log_status(self._passwords_queue.qsize())
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
                     requests.exceptions.ReadTimeout, HTTPError):
-                print_error(f"connection timeout for password '{passw}', putting back in queue...")
+                print_error(f"timed out - consider setting sleep (-s), returning '{passw}' to queue...")
                 self._passwords_queue.put(passw)
                 continue
             except requests.exceptions.TooManyRedirects:
