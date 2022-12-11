@@ -11,7 +11,7 @@ def load_wordlist(path: str) -> List[str]:
             for word in parsed:
                 wl.append(word.strip("\n"))
     except Exception as exc:
-        pass
+        print_error(f"loading wordlist exception - {exc}")
     return wl
 
 
