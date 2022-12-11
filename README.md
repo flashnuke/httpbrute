@@ -2,7 +2,7 @@
 
 Crack HTTP authentication by brute-force
 
-Type of authentication supported:
+Types of authentication currently supported:
 * Basic Auth
 * Digest Auth
 
