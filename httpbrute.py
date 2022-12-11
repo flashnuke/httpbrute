@@ -82,7 +82,7 @@ class HTTPBrute:
             except requests.exceptions.TooManyRedirects:
                 continue
             except Exception as exc:
-                self._terminate(f"an unhandled exception occurred for one of the workers -> {exc}")
+                self._terminate(f"an unhandled exception occurred for one of the workers - {exc}")
             finally:
                 if self._sleep_intv:  # don't call `sleep()` if interval==0 to avoid context switch overhead
                     time.sleep(self._sleep_intv)
@@ -147,7 +147,7 @@ class HTTPBrute:
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:
-            self._terminate(f"an exception occurred from main runner -> {exc}")
+            self._terminate(f"an exception occurred from main runner - {exc}")
 
     @staticmethod
     def _terminate(reason):
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     for l_args in [("user", "user_list"), ("pass", "pass_list")]:
         single_word, wordlist_path = tuple(getattr(arguments, arg) for arg in l_args)
         if not has_one([single_word, wordlist_path]):
-            print_error(f"Exactly one of the following args should be used -> {l_args}")
+            print_error(f"Exactly one of the following args should be used - {l_args}")
             exit(-1)
         word_lists[l_args[1]] = load_wordlist(wordlist_path) if wordlist_path else [single_word]
 
