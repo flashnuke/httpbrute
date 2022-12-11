@@ -10,7 +10,7 @@ def get_argument_parser() -> argparse.ArgumentParser:
                                             "* BasicAuth"
                                             "* DigestAuth")
 
-    parser.add_argument(dest='target_url', type=str, help="url of targeted login page")
+    parser.add_argument(dest="target_url", type=str, help="url of targeted login page")
 
     parser.add_argument("-u", "--user", dest='user', action='store', type=str, default=str(),
                         help="username (single)")
@@ -27,10 +27,10 @@ def get_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("-w", "--workers", dest='workers', action="store", type=int,
                         default=16, help="number of workers / threads (default -> 16)")
 
-    parser.add_argument("-t", f"--timeout", dest='timeout', action="store",
+    parser.add_argument("-t", "--timeout", dest='timeout', action="store",
                         type=int, default=10, help='request timeout (default -> 10)')
 
-    parser.add_argument("-s", f"--sleep", dest='sleep', action="store",
+    parser.add_argument("-s", "--sleep", dest='sleep', action="store",
                         type=float, default=0.0, help='sleep interval between request for each worker (default -> 0)')
 
     return parser
