@@ -62,7 +62,7 @@ class HTTPBrute:
                     self.finished = True
                 sz = self._passwords_queue.qsize()
                 if sz % 10000 == 0 and not self._finished:
-                    print(f"left -> {sz}")
+                    print(f"[*] left -> {sz} | elapsed time -> {time.time() - self._start}[s]")
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
                     requests.exceptions.ReadTimeout, HTTPError):
                 print(f"[!] connection timeout for password '{passw}', putting back in queue...")
@@ -97,7 +97,7 @@ class HTTPBrute:
     def run(self):
         try:
             for user in self._usernames:
-                print(f"[*] settings up {self._workers_count} workers for username -> {user}")
+                print(f"[*] setting up {self._workers_count} workers for username -> {user}")
                 threads = list()
                 self._start = time.time()
                 for passw in range(self._workers_count):
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     for args in [("user", "user_list"), ("pass", "pass_list")]:
         single_word, wordlist_path = tuple(getattr(arguments, arg) for arg in args)
         if not has_one([single_word, wordlist_path]):
-            print(f"Only one of the following args should be used -> {args}")
+            print(f"Exactly one of the following args should be used -> {args}")
             exit(-1)
         word_lists[args[1]] = load_wordlist(wordlist_path) if wordlist_path else [single_word]
 
@@ -137,4 +137,4 @@ if __name__ == "__main__":
               workers_count=arguments.workers,
               timeout=arguments.timeout,
               sleep=arguments.sleep,
-              **word_lists)
+              **word_lists).run()
