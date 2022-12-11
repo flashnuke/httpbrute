@@ -3,7 +3,7 @@ from .output_methods import *
 
 
 def load_wordlist(path: str) -> List[str]:
-    print_info(f"attempting to load wordlist -> {path}")
+    print_info(f"loading wordlist, path -> {path}")
     wl = list()
     try:
         with open(path, "r", encoding="utf-8") as wordlist:
