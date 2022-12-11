@@ -14,7 +14,7 @@ from urllib3.exceptions import HTTPError
 
 class HTTPBrute:
     _SUCCESS_SCODE = 200
-    _LOG_STATUS_INTV = 30  # in seconds
+    _LOG_STATUS_INTV = 60  # in seconds
 
     def __init__(self,
                  target_url: str,
