@@ -93,8 +93,9 @@ class HTTPBrute:
             if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
                 elapsed = self._get_elapsed_time()
                 passwords_checked = self._total_count - left
+                time_left = left / (passwords_checked / elapsed or 1 ** -HTTPBrute._ROUND_PREC)
                 print_info(f"left -> {left} passwords "
-                           f"({round(left / (passwords_checked / elapsed), HTTPBrute._ROUND_PREC)} min) | "
+                           f"({round(time_left, HTTPBrute._ROUND_PREC)} min) | "
                            f"elapsed -> {elapsed} min")
                 self._last_status_log = now
 
