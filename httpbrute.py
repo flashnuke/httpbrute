@@ -15,6 +15,7 @@ from urllib3.exceptions import HTTPError
 class HTTPBrute:
     _SUCCESS_SCODE = 200
     _LOG_STATUS_INTV = 60  # in seconds
+    _ROUND_PREC = 2
 
     def __init__(self,
                  target_url: str,
@@ -92,12 +93,13 @@ class HTTPBrute:
             if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
                 elapsed = self._get_elapsed_time()
                 passwords_checked = self._total_count - left
-                print_info(f"passwords left -> {left} ({left / (passwords_checked / elapsed)} min) | "
+                print_info(f"passwords left -> {left} "
+                           f"({round(left / (passwords_checked / elapsed), HTTPBrute._ROUND_PREC)} min) | "
                            f"elapsed -> {elapsed} min")
                 self._last_status_log = now
 
     def _get_elapsed_time(self) -> float:
-        return round((time.time() - self._start) / 60, 2)  # minutes
+        return round((time.time() - self._start) / 60, HTTPBrute._ROUND_PREC)  # minutes
 
     def log_success(self, user: str, passwd: str):
         self._finished = True
