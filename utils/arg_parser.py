@@ -9,7 +9,7 @@ def get_argument_parser() -> argparse.ArgumentParser:
     # Create the parser and add arguments
     parser = argparse.ArgumentParser(description=f'A tool for brute-forcing HTTP auth login pages',
                                      formatter_class=argparse.RawTextHelpFormatter,
-                                     usage=f"./httpbrute <url> -u <username> -P <passwords.lt>",
+                                     usage=f"./httpbrute.py <url> -u <username> -P <passwords.lt>",
                                      epilog="This tool supports two types of HTTP authentication:"
                                             "* BasicAuth"
                                             "* DigestAuth")
