@@ -127,7 +127,7 @@ class HTTPBrute:
     def run(self):
         try:
             for user in self._usernames:
-                print_info(f"setting up {self._workers_count} workers for username -> {user}")
+                print_info(f"setting up {self._workers_count} workers | username -> {user}")
                 threads = list()
                 self._start = time.time()
                 for passw in range(self._workers_count):
