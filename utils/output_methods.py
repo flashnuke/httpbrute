@@ -32,8 +32,12 @@ def print_success(text: str):
     print(f"[{Bold}{Green}+{White}] {text}")
 
 
-def print_info(text: str):
-    print(f"[{Bold}{Blue}*{White}] {text}")
+def print_info(text: str, reset_line=False):
+    text = f"[{Bold}{Blue}*{White}] {text}"
+    if reset_line:
+        print(text, end="\r")
+    else:
+        print(text)
 
 
 def print_banner():

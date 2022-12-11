@@ -14,7 +14,7 @@ from urllib3.exceptions import HTTPError
 
 class HTTPBrute:
     _SUCCESS_SCODE = 200
-    _LOG_STATUS_INTV = 60  # in seconds
+    _LOG_STATUS_INTV = 0.5  # in seconds
     _ROUND_PREC = 2
 
     def __init__(self,
@@ -93,10 +93,10 @@ class HTTPBrute:
             if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
                 elapsed = self._get_elapsed_time()
                 passwords_checked = self._total_count - left
-                time_left = left / (passwords_checked / elapsed or 1 ** -HTTPBrute._ROUND_PREC)
+                time_left = left / (passwords_checked / (elapsed or 1 ** -HTTPBrute._ROUND_PREC))
                 print_info(f"left -> {left} passwords "
                            f"({round(time_left, HTTPBrute._ROUND_PREC)} min) | "
-                           f"elapsed -> {elapsed} min")
+                           f"elapsed -> {elapsed} min" + ' ' * 50, reset_line=True)
                 self._last_status_log = now
 
     def _get_elapsed_time(self) -> float:

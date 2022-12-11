@@ -6,7 +6,7 @@ def load_wordlist(path: str) -> List[str]:
     print_info(f"loading wordlist, path -> {path}")
     wl = list()
     try:
-        with open(path, "r", encoding="utf-8") as wordlist:
+        with open(path, "r") as wordlist:
             parsed = wordlist.readlines()
             for word in parsed:
                 wl.append(word.strip("\n"))
