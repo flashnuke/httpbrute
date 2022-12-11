@@ -87,7 +87,7 @@ class HTTPBrute:
                     time.sleep(self._sleep_intv)
 
     def _log_status(self, left: int):
-        with self._log_status_lock as lock:
+        with self._log_status_lock:
             now = time.time()
             if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
                 elapsed = self._get_elapsed_time()
