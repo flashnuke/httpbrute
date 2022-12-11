@@ -127,7 +127,7 @@ class HTTPBrute:
                 if user in self._results:
                     print_success(f"username {user} found password -> {self._results[user]}")
                 else:
-                    print_success(f"username {user} found failed to find password")
+                    print_error(f"username {user} failed to find password")
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:

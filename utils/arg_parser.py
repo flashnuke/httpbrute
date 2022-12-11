@@ -31,6 +31,6 @@ def get_argument_parser() -> argparse.ArgumentParser:
                         type=int, default=10, help='request timeout (default -> 10)')
 
     parser.add_argument("-s", f"--sleep", dest='sleep', action="store",
-                        type=int, default=0, help='sleep interval between request for each worker (default -> 0)')
+                        type=float, default=0.0, help='sleep interval between request for each worker (default -> 0)')
 
     return parser
