@@ -82,7 +82,7 @@ class HTTPBrute:
             except requests.exceptions.TooManyRedirects:
                 continue
             except Exception as exc:
-                self._terminate(f"an unhandled exception occurred for one of the workers - {exc}")
+                self._terminate(f"an unhandled exception occurred in one of the workers - {exc}")
             finally:
                 if self._sleep_intv:  # don't call `sleep()` if interval==0 to avoid context switch overhead
                     time.sleep(self._sleep_intv)
