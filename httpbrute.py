@@ -26,6 +26,8 @@ class HTTPBrute:
 
         self._usernames = user_list
         self._passwords_queue = self._generate_queue(pass_list)
+        self._total_count = self._passwords_queue.qsize()
+
         if len(self._usernames) == 0 or self._passwords_queue.empty():
             self._terminate(f"username list [size {len(self._usernames)}] "
                             f"and password list [size {self._passwords_queue.qsize()}] "
@@ -88,12 +90,14 @@ class HTTPBrute:
         with self._log_status_lock as lock:
             now = time.time()
             if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
-                print_info(f"passwords left -> {left} | "
-                           f"elapsed time -> {self._get_elapsed_time()}[s]")
+                elapsed = self._get_elapsed_time()
+                passwords_checked = self._total_count - left
+                print_info(f"passwords left -> {left} ({left / (passwords_checked / elapsed)} min) | "
+                           f"elapsed -> {elapsed} min")
                 self._last_status_log = now
 
     def _get_elapsed_time(self) -> float:
-        return round(time.time() - self._start, 2)
+        return round((time.time() - self._start) / 60, 2)  # minutes
 
     def log_success(self, user: str, passwd: str):
         self._finished = True
@@ -131,11 +135,12 @@ class HTTPBrute:
                 for worker in threads:
                     worker.join()
                 if user in self._results:
-                    print_success(f"username {user} found password -> {self._results[user]} "
-                                  f"after {self._get_elapsed_time()}[s]")
+                    print_success(f"username {Green}{Bold}{user}{White} found password -> "
+                                  f"{Green}{Bold}{self._results[user]}{White} "
+                                  f"after {self._get_elapsed_time()} min")
                 else:
-                    print_error(f"username {user} failed to find password "
-                                f"after {self._get_elapsed_time()}[s]")
+                    print_error(f"username {Red}{Bold}{user}{White} failed to find password "
+                                f"after {self._get_elapsed_time()} min")
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:
