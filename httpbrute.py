@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests
 import threading
 import queue
@@ -66,7 +68,7 @@ class HTTPBrute:
             try:
                 response = self._make_request(auth=auth)
                 if response.status_code == HTTPBrute._SUCCESS_SCODE:
-                    self.finished = True
+                    self.log_success(username, passw)
                 self.log_status(self._passwords_queue.qsize())
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
                     requests.exceptions.ReadTimeout, HTTPError):
