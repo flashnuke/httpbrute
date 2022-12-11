@@ -15,3 +15,23 @@ def print_success(text: str):
 
 def print_info(text: str):
     print(f"[{Bold}{Blue}*{White}] {text}")
+
+
+def print_banner():
+    print(f"""
+          {Red}██╗  ██╗{White}████████╗{Red}████████╗{White}██████╗         
+          {Red}██║  ██║{White}╚══██╔══╝{Red}╚══██╔══╝{White}██╔══██╗        
+          {Red}███████║{White}   ██║   {Red}   ██║   {White}██████╔╝        
+          {Red}██╔══██║{White}   ██║   {Red}   ██║   {White}██╔═══╝         
+          {Red}██║  ██║{White}   ██║   {Red}   ██║   {White}██║             
+          {Red}╚═╝  ╚═╝{White}   ╚═╝   {Red}   ╚═╝   {White}╚═╝             
+          
+          {Red}██████╗ {White}██████╗ {Red}██╗   ██╗{White}████████╗{Red}███████╗{White}
+          {Red}██╔══██╗{White}██╔══██╗{Red}██║   ██║{White}╚══██╔══╝{Red}██╔════╝{White}
+          {Red}██████╔╝{White}██████╔╝{Red}██║   ██║{White}   ██║   {Red}█████╗  {White}
+          {Red}██╔══██╗{White}██╔══██╗{Red}██║   ██║{White}   ██║   {Red}██╔══╝  {White}
+          {Red}██████╔╝{White}██║  ██║{Red}╚██████╔╝{White}   ██║   {Red}███████╗{White}
+          {Red}╚═════╝ {White}╚═╝  ╚═╝{Red} ╚═════╝ {White}   ╚═╝   {Red}╚══════╝{White}
+          
+          Written by @flashnuke
+          """)

@@ -145,6 +145,7 @@ class HTTPBrute:
 
 
 if __name__ == "__main__":
+    print_banner()
     parser = arg_parser.get_argument_parser()
     arguments = parser.parse_args()
 
@@ -152,7 +153,7 @@ if __name__ == "__main__":
     for l_args in [("user", "user_list"), ("pass", "pass_list")]:
         single_word, wordlist_path = tuple(getattr(arguments, arg) for arg in l_args)
         if not has_one([single_word, wordlist_path]):
-            print(f"Exactly one of the following args should be used -> {l_args}")
+            print_error(f"Exactly one of the following args should be used -> {l_args}")
             exit(-1)
         word_lists[l_args[1]] = load_wordlist(wordlist_path) if wordlist_path else [single_word]
 
