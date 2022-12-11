@@ -36,6 +36,7 @@ class HTTPBrute:
 
         self._url = target_url
         self._session = requests.Session()
+        print_info(f"setting up session... url -> {self._url}")
         self._workers_count = workers_count
         self._req_timeout = timeout
         self._sleep_intv = sleep
