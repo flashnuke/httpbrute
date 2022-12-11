@@ -39,10 +39,12 @@ class HTTPBrute:
         self._sleep_intv = sleep
         self._auth_cls: Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]] = self._get_auth_type()
 
-        self._start = float()
-        self._finished = False
         self._last_status_log = float()
         self._results = dict()
+        self._log_status_lock = threading.RLock()
+
+        self._start = float()
+        self._finished = False
 
     def _make_request(self, *args, **kwargs):
         """
@@ -65,10 +67,7 @@ class HTTPBrute:
                 response = self._make_request(auth=auth)
                 if response.status_code == HTTPBrute._SUCCESS_SCODE:
                     self.finished = True
-                now = time.time()
-                if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
-                    print_info(f"passwords left -> {self._passwords_queue.qsize()} | "
-                               f"elapsed time -> {round(time.time() - self._start, 2)}[s]")
+                self.log_status(self._passwords_queue.qsize())
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
                     requests.exceptions.ReadTimeout, HTTPError):
                 print_error(f"connection timeout for password '{passw}', putting back in queue...")
@@ -81,6 +80,14 @@ class HTTPBrute:
             finally:
                 if self._sleep_intv:  # don't call `sleep()` if interval==0 to avoid context switch overhead
                     time.sleep(self._sleep_intv)
+
+    def log_status(self, left: int):
+        with self._log_status_lock as lock:
+            now = time.time()
+            if now - self._last_status_log > HTTPBrute._LOG_STATUS_INTV and not self._finished:
+                print_info(f"passwords left -> {left} | "
+                           f"elapsed time -> {round(time.time() - self._start, 2)}[s]")
+                self._last_status_log = now
 
     def log_success(self, user: str, passwd: str):
         self._finished = True
