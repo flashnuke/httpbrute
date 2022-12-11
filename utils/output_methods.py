@@ -19,7 +19,7 @@ BANNER = f"""
 {Red}██████╔╝{White}██║  ██║{Red}╚██████╔╝{White}   ██║   {Red}███████╗{White}
 {Red}╚═════╝ {White}╚═╝  ╚═╝{Red} ╚═════╝ {White}   ╚═╝   {Red}╚══════╝{White}
 
-Written by @flashnuke
+Written by {Bold}{Red}@flashnuke{White}
 """
 
 
