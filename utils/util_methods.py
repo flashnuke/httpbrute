@@ -21,5 +21,5 @@ def has_one(iterrable):
 
 def format_time(elapsed: float) -> str:
     minutes = f"{int(elapsed)}".rjust(2, '0')
-    seconds = f"{int(60 * elapsed % 60)}".ljust(2, '0')
+    seconds = f"{int((60 * elapsed) % 60)}".ljust(2, '0')
     return f"{minutes}:{seconds}"
