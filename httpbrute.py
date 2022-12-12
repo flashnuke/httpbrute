@@ -25,16 +25,23 @@ class HTTPBrute:
                  workers_count: int,
                  timeout: int):
         self._log_status_lock = threading.RLock()
+
+        # ========== reset in `_reset()`
+
+        self._timeouts = 0
+        self._total_count = 0
+        self._start = float()
+        self._finished = False
         self._last_status_log = float()
+        self._passwords_queue = queue.Queue()
+
+        # ==========
 
         self._usernames = user_list
         self._pass_list_raw = pass_list
-        self._passwords_queue = queue.Queue()
-        self._total_count = self._passwords_queue.qsize()
-
-        if len(self._usernames) == 0 or self._passwords_queue.empty():
+        if len(self._usernames) == 0 or len(self._pass_list_raw) == 0:
             self._terminate(f"username list [size {len(self._usernames)}] "
-                            f"and password list [size {self._passwords_queue.qsize()}] "
+                            f"and password list [size {len(self._pass_list_raw)}] "
                             f"cannot be empty!")
         else:
             print_success(f"loaded {len(self._usernames)} usernames and "
@@ -45,16 +52,12 @@ class HTTPBrute:
         print_success(f"setting up sessions | url -> {self._url}")
         print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
 
-        self._timeouts = 0
         self._workers_count = workers_count
         self._req_timeout = timeout
         self._sleep_intv = sleep
         self._auth_cls: Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]] = self._get_auth_type()
 
         self._results = dict()
-
-        self._start = float()
-        self._finished = False
 
     def _reset_run(self):
         self._timeouts = 0
