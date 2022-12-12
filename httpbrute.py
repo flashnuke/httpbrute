@@ -40,7 +40,7 @@ class HTTPBrute:
 
         self._url = target_url
         self._sessions = {num: requests.Session() for num in range(workers_count)}
-        print_info(f"setting up a session for each worker | url -> {self._url}")
+        print_info(f"setting up sessions | url -> {self._url}")
         print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
 
         self._workers_count = workers_count
