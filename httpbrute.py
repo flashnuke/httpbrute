@@ -141,6 +141,8 @@ class HTTPBrute:
 
                 for worker in threads:
                     worker.join()
+                if self._last_status_log != float():
+                    print("")
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
