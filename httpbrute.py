@@ -61,8 +61,6 @@ class HTTPBrute:
         self._results = dict()
 
     def _reset_run(self):
-        print(DELIMITER)
-
         self._timeouts = 0
         self._start = float()
         self._finished = False
@@ -171,6 +169,7 @@ class HTTPBrute:
                 for worker in threads:
                     worker.join()
                 self._print_blank()
+                print(DELIMITER)
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
