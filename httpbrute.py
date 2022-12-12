@@ -158,7 +158,7 @@ class HTTPBrute:
         try:
             for user in self._usernames:
                 self._reset_run()
-                print_success(f"setting up {self._workers_count} workers | username -> {user}")
+                print_success(f"setting up {self._workers_count} workers | username -> {Bold}{user}{White}")
                 threads = list()
                 self._start = time.time()
                 for worker_num in range(self._workers_count):
