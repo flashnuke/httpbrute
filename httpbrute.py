@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 
+import os
+import time
+import queue
 import requests
 import threading
-import queue
-import time
-import os
 
 from utils import *
 from typing import List, Type, Union
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 from urllib3.exceptions import HTTPError
+from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
 
 class HTTPBrute:
+    _ROUND_PREC = 2
     _SUCCESS_SCODE = 200
     _LOG_STATUS_INTV = 0.5  # in seconds
-    _ROUND_PREC = 2
 
     def __init__(self,
                  target_url: str,
@@ -28,7 +28,6 @@ class HTTPBrute:
         self._usernames = user_list
         self._passwords_queue = self._generate_queue(pass_list)
         self._total_count = self._passwords_queue.qsize()
-        self._timeouts = 0
 
         if len(self._usernames) == 0 or self._passwords_queue.empty():
             self._terminate(f"username list [size {len(self._usernames)}] "
@@ -43,6 +42,7 @@ class HTTPBrute:
         print_success(f"setting up sessions | url -> {self._url}")
         print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
 
+        self._timeouts = 0
         self._workers_count = workers_count
         self._req_timeout = timeout
         self._sleep_intv = sleep
@@ -55,11 +55,12 @@ class HTTPBrute:
         self._start = float()
         self._finished = False
 
-    def _make_request(self, session_num: int, *args, **kwargs):
-        """
-        don't pass url as argument -> less overhead
-        """
-        return self._sessions[session_num].get(self._url, timeout=self._req_timeout, *args, **kwargs)
+    def _reset_run(self):
+        self._timeouts = 0
+        self._start = float()
+        self._finished = False
+        self._last_status_log = float()
+        self._total_count = self._passwords_queue.qsize()
 
     @staticmethod
     def _generate_queue(wordlist: List[str]) -> queue.Queue[str]:
@@ -68,27 +69,12 @@ class HTTPBrute:
             wq.put(word)
         return wq
 
-    def _worker_routine(self, worker_num: int, username: str):
-        while not self._passwords_queue.empty() and not self._finished:
-            passw = self._passwords_queue.get()
-            auth = self._auth_cls(username, passw)
-            try:
-                response = self._make_request(session_num=worker_num, auth=auth)
-                if response.status_code == HTTPBrute._SUCCESS_SCODE:
-                    self.log_success(username, passw)
-                self._log_status(self._passwords_queue.qsize())
-            except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
-                    requests.exceptions.ReadTimeout, HTTPError):
-                self._timeouts += 1
-                self._passwords_queue.put(passw)
-                continue
-            except requests.exceptions.TooManyRedirects:
-                continue
-            except Exception as exc:
-                self._terminate(f"an unhandled exception occurred in one of the workers - {exc}")
-            finally:
-                if self._sleep_intv:  # don't call `sleep()` if interval==0 to avoid context switch overhead
-                    time.sleep(self._sleep_intv)
+    def _get_elapsed_time(self) -> float:
+        return round((time.time() - self._start) / 60, HTTPBrute._ROUND_PREC)  # minutes
+    
+    def _print_blank(self):
+        if self._last_status_log != float():
+            print("")
 
     def _log_status(self, left: int):
         with self._log_status_lock:
@@ -103,13 +89,25 @@ class HTTPBrute:
                            f"elapsed -> {format_time(elapsed)} mins" + ' ' * 50, reset_line=True)
                 self._last_status_log = now
 
-    def _get_elapsed_time(self) -> float:
-        return round((time.time() - self._start) / 60, HTTPBrute._ROUND_PREC)  # minutes
-
-    def log_success(self, user: str, passwd: str):
+    def _mark_success(self, user: str, passwd: str):
         self._finished = True
         self._results[user] = passwd
 
+    def _terminate(self, reason):
+        """
+        happens on error / user interrupt
+        """
+        with self._log_status_lock:
+            self._print_blank()
+            print_error(f"terminating | reason -> {reason}")
+            os.kill(os.getpid(), 9)
+    
+    def _make_request(self, session_num: int, *args, **kwargs):
+        """
+        don't pass url as argument -> less overhead
+        """
+        return self._sessions[session_num].get(self._url, timeout=self._req_timeout, *args, **kwargs)
+       
     def _get_auth_type(self) -> Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]]:
         try:
             res = self._make_request(0)
@@ -127,10 +125,33 @@ class HTTPBrute:
                 self._terminate(f"missing auth header ('WWW-Authenticate')")
         except Exception as exc:
             self._terminate(f"unable to determine auth-type, exception - {exc}")
-
+            
+    def _worker_routine(self, worker_num: int, username: str):
+        while not self._passwords_queue.empty() and not self._finished:
+            passw = self._passwords_queue.get()
+            auth = self._auth_cls(username, passw)
+            try:
+                response = self._make_request(session_num=worker_num, auth=auth)
+                if response.status_code == HTTPBrute._SUCCESS_SCODE:
+                    self._mark_success(username, passw)
+                self._log_status(self._passwords_queue.qsize())
+            except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
+                    requests.exceptions.ReadTimeout, HTTPError):
+                self._timeouts += 1
+                self._passwords_queue.put(passw)
+                continue
+            except requests.exceptions.TooManyRedirects:
+                continue
+            except Exception as exc:
+                self._terminate(f"an unhandled exception occurred in one of the workers - {exc}")
+            finally:
+                if self._sleep_intv:  # don't call `sleep()` if interval==0 to avoid context switch overhead
+                    time.sleep(self._sleep_intv)
+                    
     def run(self):
         try:
             for user in self._usernames:
+                self._reset_run()
                 print_success(f"setting up {self._workers_count} workers | username -> {user}")
                 threads = list()
                 self._start = time.time()
@@ -153,19 +174,6 @@ class HTTPBrute:
             self._terminate("user request")
         except Exception as exc:
             self._terminate(f"an exception occurred from main runner - {exc}")
-
-    def _terminate(self, reason):
-        """
-        happens on error / user interrupt
-        """
-        with self._log_status_lock:
-            self._print_blank()
-            print_error(f"terminating | reason -> {reason}")
-            os.kill(os.getpid(), 9)
-
-    def _print_blank(self):
-        if self._last_status_log != float():
-            print("")
 
 
 if __name__ == "__main__":
