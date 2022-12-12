@@ -40,7 +40,7 @@ class HTTPBrute:
 
         self._url = target_url
         self._sessions = {num: requests.Session() for num in range(workers_count)}
-        print_info(f"setting up sessions | url -> {self._url}")
+        print_success(f"setting up sessions | url -> {self._url}")
         print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
 
         self._workers_count = workers_count
@@ -131,7 +131,7 @@ class HTTPBrute:
     def run(self):
         try:
             for user in self._usernames:
-                print_info(f"setting up {self._workers_count} workers | username -> {user}")
+                print_success(f"setting up {self._workers_count} workers | username -> {user}")
                 threads = list()
                 self._start = time.time()
                 for worker_num in range(self._workers_count):
