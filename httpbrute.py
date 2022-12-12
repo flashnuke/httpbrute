@@ -39,13 +39,14 @@ class HTTPBrute:
 
         self._usernames = user_list
         self._pass_list_raw = pass_list
-        if len(self._usernames) == 0 or len(self._pass_list_raw) == 0:
-            self._terminate(f"username list [size {len(self._usernames)}] "
-                            f"and password list [size {len(self._pass_list_raw)}] "
+        len_usernames, len_passwords = len(self._usernames), len(self._pass_list_raw)
+        if len_usernames == 0 or len_passwords == 0:
+            self._terminate(f"username list [size {len_usernames}] "
+                            f"and password list [size {len_passwords}] "
                             f"cannot be empty!")
         else:
-            print_success(f"loaded {len(self._usernames)} usernames and "
-                          f"{self._passwords_queue.qsize()} passwords")
+            print_success(f"loaded {len_usernames} usernames and "
+                          f"{len_passwords} passwords")
 
         self._url = target_url
         self._sessions = {num: requests.Session() for num in range(workers_count)}
