@@ -39,8 +39,8 @@ class HTTPBrute:
                           f"{self._passwords_queue.qsize()} passwords")
 
         self._url = target_url
-        self._session = requests.Session()
-        print_info(f"setting up session | url -> {self._url}")
+        self._sessions = {num: requests.Session() for num in range(workers_count)}
+        print_info(f"setting up sessions | url -> {self._url}")
         print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
 
         self._workers_count = workers_count
@@ -55,11 +55,11 @@ class HTTPBrute:
         self._start = float()
         self._finished = False
 
-    def _make_request(self, *args, **kwargs):
+    def _make_request(self, session_num: int, *args, **kwargs):
         """
         don't pass url as argument -> less overhead
         """
-        return self._session.get(self._url, timeout=self._req_timeout, *args, **kwargs)
+        return self._sessions[session_num].get(self._url, timeout=self._req_timeout, *args, **kwargs)
 
     @staticmethod
     def _generate_queue(wordlist: List[str]) -> queue.Queue[str]:
@@ -68,12 +68,12 @@ class HTTPBrute:
             wq.put(word)
         return wq
 
-    def _worker_routine(self, username: str):
+    def _worker_routine(self, worker_num: int, username: str):
         while not self._passwords_queue.empty() and not self._finished:
             passw = self._passwords_queue.get()
             auth = self._auth_cls(username, passw)
             try:
-                response = self._make_request(auth=auth)
+                response = self._make_request(session_num=worker_num, auth=auth)
                 if response.status_code == HTTPBrute._SUCCESS_SCODE:
                     self.log_success(username, passw)
                 self._log_status(self._passwords_queue.qsize())
@@ -98,9 +98,9 @@ class HTTPBrute:
                 passwords_checked = self._total_count - left
                 time_left = left / (passwords_checked / (elapsed or 1 ** -HTTPBrute._ROUND_PREC))
                 print_info(f"left -> {left} passwords "
-                           f"({round(time_left, HTTPBrute._ROUND_PREC)} mins) | "
+                           f"({format_time(time_left)} mins) | "
                            f"timeouts -> {self._timeouts} | "
-                           f"elapsed -> {elapsed} mins" + ' ' * 50, reset_line=True)
+                           f"elapsed -> {format_time(elapsed)} mins" + ' ' * 50, reset_line=True)
                 self._last_status_log = now
 
     def _get_elapsed_time(self) -> float:
@@ -112,7 +112,7 @@ class HTTPBrute:
 
     def _get_auth_type(self) -> Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]]:
         try:
-            res = self._make_request()
+            res = self._make_request(0)
             auth_header = res.headers.get('WWW-Authenticate')
             if auth_header:
                 if 'basic' in auth_header.lower():
@@ -134,8 +134,8 @@ class HTTPBrute:
                 print_info(f"setting up {self._workers_count} workers | username -> {user}")
                 threads = list()
                 self._start = time.time()
-                for passw in range(self._workers_count):
-                    t = threading.Thread(target=self._worker_routine, args=(user,))
+                for worker_num in range(self._workers_count):
+                    t = threading.Thread(target=self._worker_routine, args=(worker_num, user))
                     t.start()
                     threads.append(t)
 
@@ -144,10 +144,10 @@ class HTTPBrute:
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
-                                  f"after {self._get_elapsed_time()} mins")
+                                  f"after {format_time(self._get_elapsed_time())} mins")
                 else:
                     print_fail(f"username {Red}{Bold}{user}{White} failed to find password "
-                               f"after {self._get_elapsed_time()} mins")
+                               f"after {format_time(self._get_elapsed_time())} mins")
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:
