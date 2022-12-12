@@ -24,6 +24,7 @@ class HTTPBrute:
                  sleep: int,
                  workers_count: int,
                  timeout: int):
+        self._log_status_lock = threading.RLock()
 
         self._usernames = user_list
         self._pass_list_raw = pass_list
@@ -51,7 +52,6 @@ class HTTPBrute:
 
         self._last_status_log = float()
         self._results = dict()
-        self._log_status_lock = threading.RLock()
 
         self._start = float()
         self._finished = False
