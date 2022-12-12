@@ -153,13 +153,13 @@ class HTTPBrute:
         except Exception as exc:
             self._terminate(f"an exception occurred from main runner - {exc}")
 
-    @staticmethod
-    def _terminate(reason):
+    def _terminate(self, reason):
         """
         happens on error / user interrupt
         """
-        print_error(f"terminating | reason -> {reason}")
-        os.kill(os.getpid(), 9)
+        with self._log_status_lock:
+            print_error(f"terminating | reason -> {reason}")
+            os.kill(os.getpid(), 9)
 
 
 if __name__ == "__main__":
