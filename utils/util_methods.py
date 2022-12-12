@@ -17,3 +17,9 @@ def load_wordlist(path: str) -> List[str]:
 
 def has_one(iterrable):
     return sum(bool(e) for e in iterrable) == 1
+
+
+def format_time(elapsed: float) -> str:
+    minutes = f"{int(elapsed)}".rjust(2, '0')
+    seconds = f"{int((60 * elapsed) % 60)}".rjust(2, '0')
+    return f"{minutes}:{seconds}"
