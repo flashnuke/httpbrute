@@ -130,6 +130,8 @@ class HTTPBrute:
             else:
                 print_error(f"auth header is missing, please check the url")
                 self._terminate(f"missing auth header ('WWW-Authenticate')")
+        except KeyboardInterrupt:
+            self._terminate("user request")
         except Exception as exc:
             self._terminate(f"unable to determine auth-type, exception - {exc}")
             
