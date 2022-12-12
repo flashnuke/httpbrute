@@ -28,6 +28,7 @@ class HTTPBrute:
         self._usernames = user_list
         self._passwords_queue = self._generate_queue(pass_list)
         self._total_count = self._passwords_queue.qsize()
+        self._timeouts = 0
 
         if len(self._usernames) == 0 or self._passwords_queue.empty():
             self._terminate(f"username list [size {len(self._usernames)}] "
@@ -40,6 +41,8 @@ class HTTPBrute:
         self._url = target_url
         self._session = requests.Session()
         print_info(f"setting up session | url -> {self._url}")
+        print_info(f"in case of too many timeouts - consider setting sleep (-s, --sleep)")
+
         self._workers_count = workers_count
         self._req_timeout = timeout
         self._sleep_intv = sleep
@@ -76,7 +79,7 @@ class HTTPBrute:
                 self._log_status(self._passwords_queue.qsize())
             except (requests.exceptions.ConnectionError, requests.exceptions.ConnectTimeout,
                     requests.exceptions.ReadTimeout, HTTPError):
-                print_error(f"timed out - consider setting sleep (-s), returning '{passw}' to queue...")
+                self._timeouts += 1
                 self._passwords_queue.put(passw)
                 continue
             except requests.exceptions.TooManyRedirects:
@@ -96,6 +99,7 @@ class HTTPBrute:
                 time_left = left / (passwords_checked / (elapsed or 1 ** -HTTPBrute._ROUND_PREC))
                 print_info(f"left -> {left} passwords "
                            f"({round(time_left, HTTPBrute._ROUND_PREC)} mins) | "
+                           f"timeouts -> {self._timeouts} | "
                            f"elapsed -> {elapsed} mins" + ' ' * 50, reset_line=True)
                 self._last_status_log = now
 
