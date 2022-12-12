@@ -56,6 +56,7 @@ class HTTPBrute:
         self._req_timeout = timeout
         self._sleep_intv = sleep
         self._auth_cls: Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]] = self._get_auth_type()
+        print_success(f"auth header set successfully -> {self._auth_cls.__class__.__name__}")
 
         self._results = dict()
 
