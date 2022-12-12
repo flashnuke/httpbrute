@@ -141,8 +141,7 @@ class HTTPBrute:
 
                 for worker in threads:
                     worker.join()
-                if self._last_status_log != float():
-                    print("")
+                self._print_blank()
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
@@ -160,10 +159,13 @@ class HTTPBrute:
         happens on error / user interrupt
         """
         with self._log_status_lock:
-            if self._last_status_log != float():
-                print("")
+            self._print_blank()
             print_error(f"terminating | reason -> {reason}")
             os.kill(os.getpid(), 9)
+
+    def _print_blank(self):
+        if self._last_status_log != float():
+            print("")
 
 
 if __name__ == "__main__":
