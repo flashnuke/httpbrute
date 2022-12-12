@@ -2,9 +2,9 @@ White = '\033[0m'
 Bold = '\033[1m'
 Red = '\033[31m'
 Green = '\033[32m'
-Gray = '\033[37m'
 Blue = '\033[34m'
 
+DELIMITER = "=========================================="
 BANNER = f"""
 {Red}██╗  ██╗{White}████████╗{Red}████████╗{White}██████╗         
 {Red}██║  ██║{White}╚══██╔══╝{Red}╚══██╔══╝{White}██╔══██╗        
@@ -19,9 +19,9 @@ BANNER = f"""
 {Red}██╔══██╗{White}██╔══██╗{Red}██║   ██║{White}   ██║   {Red}██╔══╝  {White}
 {Red}██████╔╝{White}██║  ██║{Red}╚██████╔╝{White}   ██║   {Red}███████╗{White}
 {Red}╚═════╝ {White}╚═╝  ╚═╝{Red} ╚═════╝ {White}   ╚═╝   {Red}╚══════╝{White}
-==========================================
+{DELIMITER}
 Written by {Bold}{Red}@flashnuke{White}
-==========================================
+{DELIMITER}
 """
 
 
@@ -34,7 +34,7 @@ def print_success(text: str):
 
 
 def print_fail(text: str):
-    print(f"[{Bold}{Gray}-{White}] {text}")
+    print(f"[{Bold}{Red}-{White}] {text}")
 
 
 def print_info(text: str, reset_line=False):

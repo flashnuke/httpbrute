@@ -60,6 +60,8 @@ class HTTPBrute:
         self._results = dict()
 
     def _reset_run(self):
+        print(DELIMITER)
+
         self._timeouts = 0
         self._start = float()
         self._finished = False
