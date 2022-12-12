@@ -26,7 +26,8 @@ class HTTPBrute:
                  timeout: int):
 
         self._usernames = user_list
-        self._passwords_queue = self._generate_queue(pass_list)
+        self._pass_list_raw = pass_list
+        self._passwords_queue = queue.Queue()
         self._total_count = self._passwords_queue.qsize()
 
         if len(self._usernames) == 0 or self._passwords_queue.empty():
@@ -60,6 +61,7 @@ class HTTPBrute:
         self._start = float()
         self._finished = False
         self._last_status_log = float()
+        self._passwords_queue = self._generate_queue(self._pass_list_raw)
         self._total_count = self._passwords_queue.qsize()
 
     @staticmethod
