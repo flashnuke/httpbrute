@@ -25,6 +25,7 @@ class HTTPBrute:
                  workers_count: int,
                  timeout: int):
         self._log_status_lock = threading.RLock()
+        self._last_status_log = float()
 
         self._usernames = user_list
         self._pass_list_raw = pass_list
@@ -50,7 +51,6 @@ class HTTPBrute:
         self._sleep_intv = sleep
         self._auth_cls: Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]] = self._get_auth_type()
 
-        self._last_status_log = float()
         self._results = dict()
 
         self._start = float()
