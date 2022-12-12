@@ -146,8 +146,8 @@ class HTTPBrute:
                                   f"{Green}{Bold}{self._results[user]}{White} "
                                   f"after {self._get_elapsed_time()} mins")
                 else:
-                    print_error(f"username {Red}{Bold}{user}{White} failed to find password "
-                                f"after {self._get_elapsed_time()} mins")
+                    print_fail(f"username {Red}{Bold}{user}{White} failed to find password "
+                               f"after {self._get_elapsed_time()} mins")
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:

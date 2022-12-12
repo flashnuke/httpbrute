@@ -2,6 +2,7 @@ White = '\033[0m'
 Bold = '\033[1m'
 Red = '\033[31m'
 Green = '\033[32m'
+Gray = '\033[37m'
 Blue = '\033[34m'
 
 BANNER = f"""
@@ -30,6 +31,10 @@ def print_error(text: str):
 
 def print_success(text: str):
     print(f"[{Bold}{Green}+{White}] {text}")
+
+
+def print_fail(text: str):
+    print(f"[{Bold}{Gray}-{White}] {text}")
 
 
 def print_info(text: str, reset_line=False):
