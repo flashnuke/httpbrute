@@ -158,6 +158,7 @@ class HTTPBrute:
         happens on error / user interrupt
         """
         with self._log_status_lock:
+            print("")
             print_error(f"terminating | reason -> {reason}")
             os.kill(os.getpid(), 9)
 
