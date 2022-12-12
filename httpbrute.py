@@ -169,7 +169,6 @@ class HTTPBrute:
                 for worker in threads:
                     worker.join()
                 self._print_blank()
-                print(DELIMITER)
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
@@ -177,6 +176,7 @@ class HTTPBrute:
                 else:
                     print_fail(f"username {Red}{Bold}{user}{White} failed to find password "
                                f"after {format_time(self._get_elapsed_time())} mins")
+                print(DELIMITER)
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:
