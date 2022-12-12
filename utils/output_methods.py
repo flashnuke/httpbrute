@@ -22,8 +22,7 @@ BANNER = f"""
 {Red}╚═════╝ {White}╚═╝  ╚═╝{Red} ╚═════╝ {White}   ╚═╝   {Red}╚══════╝{White}
 {DELIMITER}
 Written by {Bold}{Red}@flashnuke{White}
-{DELIMITER}
-"""
+{DELIMITER}"""
 
 
 def print_error(text: str):
