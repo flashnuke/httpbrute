@@ -100,7 +100,7 @@ class HTTPBrute:
                 print_info(f"left -> {left} passwords "
                            f"({round(time_left, HTTPBrute._ROUND_PREC)} mins) | "
                            f"timeouts -> {self._timeouts} | "
-                           f"elapsed -> {format_time(elapsed)} mins" + ' ' * 50, reset_line=True)
+                           f"elapsed -> {elapsed} mins" + ' ' * 50, reset_line=True)
                 self._last_status_log = now
 
     def _get_elapsed_time(self) -> float:
@@ -144,10 +144,10 @@ class HTTPBrute:
                 if user in self._results:
                     print_success(f"username {Green}{Bold}{user}{White} found password -> "
                                   f"{Green}{Bold}{self._results[user]}{White} "
-                                  f"after {format_time(self._get_elapsed_time())} mins")
+                                  f"after {self._get_elapsed_time()} mins")
                 else:
                     print_fail(f"username {Red}{Bold}{user}{White} failed to find password "
-                               f"after {format_time(self._get_elapsed_time())} mins")
+                               f"after {self._get_elapsed_time()} mins")
         except KeyboardInterrupt:
             self._terminate("user request")
         except Exception as exc:
