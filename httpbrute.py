@@ -113,7 +113,8 @@ class HTTPBrute:
         """
         don't pass url as argument -> less overhead
         """
-        return self._sessions[session_num].get(self._url, timeout=self._req_timeout, *args, **kwargs)
+        return self._sessions[session_num].get(self._url, timeout=self._req_timeout,
+                                               allow_redirects=True, *args, **kwargs)
        
     def _get_auth_type(self) -> Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]]:
         try:
