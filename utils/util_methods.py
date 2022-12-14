@@ -1,3 +1,4 @@
+import os
 from typing import List
 from .output_methods import *
 
@@ -12,6 +13,8 @@ def load_wordlist(path: str) -> List[str]:
                 wl.append(word.strip("\n"))
     except Exception as exc:
         print_error(f"loading wordlist exception - {exc}")
+    except KeyboardInterrupt:
+        os.kill(os.getpid(), 9)
     return wl
 
 
