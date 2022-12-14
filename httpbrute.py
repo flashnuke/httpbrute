@@ -152,6 +152,8 @@ class HTTPBrute:
                 continue
             except requests.exceptions.TooManyRedirects:
                 continue
+            except UnicodeEncodeError:
+                continue  # bad input
             except Exception as exc:
                 self._terminate(f"an unhandled exception occurred in one of the workers - {exc}")
             finally:
