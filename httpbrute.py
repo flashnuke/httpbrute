@@ -3,6 +3,7 @@
 import os
 import time
 import queue
+import urllib3
 import requests
 import threading
 
@@ -10,6 +11,8 @@ from utils import *
 from typing import List, Type, Union
 from urllib3.exceptions import HTTPError
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class HTTPBrute:
@@ -113,7 +116,7 @@ class HTTPBrute:
         """
         don't pass url as argument -> less overhead
         """
-        return self._sessions[session_num].get(self._url, timeout=self._req_timeout,
+        return self._sessions[session_num].get(self._url, timeout=self._req_timeout, verify=False,
                                                allow_redirects=True, *args, **kwargs)
        
     def _get_auth_type(self) -> Union[Type[HTTPBasicAuth], Type[HTTPDigestAuth]]:
